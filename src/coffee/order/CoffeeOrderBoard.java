@@ -1,32 +1,34 @@
 package coffee.order;
 
-import java.util.LinkedList;
+import java.util.*;
 
 public class CoffeeOrderBoard {
 
-    private final LinkedList<Order> orders;
+    private final Map<Integer, Order> orders = new HashMap<>();
+    private Integer nextOrder = 0;
 
     public CoffeeOrderBoard() {
-        this.orders = new LinkedList<>();
     }
 
     public void add(String name){
-        int orderNumber = 1;
-        if (!orders.isEmpty()) {
-            orderNumber = orders.getLast().getOrderNumber()+1;
-        }
-        orders.add(new Order(name, orderNumber));
+        nextOrder++;
+        this.orders.put(nextOrder, (new Order(name, nextOrder)));
     }
 
     public void deliver(){
-        System.out.println(orders.removeFirst());
+        Integer min = Integer.MAX_VALUE;
+        for (Integer key : orders.keySet()) {
+            if (key < min){
+                min = key;
+            }
+        }
+        orders.remove(min);
     }
 
     public void deliver(int numberOfOrder){
-        for (Order order : orders) {
-            if (order.getOrderNumber() == numberOfOrder){
-                System.out.println(order);
-                orders.remove(order);
+        for (Integer key : orders.keySet()) {
+            if (key.equals(numberOfOrder)){
+                orders.remove(key);
                 break;
             }
         }
@@ -34,8 +36,12 @@ public class CoffeeOrderBoard {
 
     public void draw(){
         StringBuilder messageToDraw = new StringBuilder("=============\nNum   |  Name\n");
-        for (Order order : orders) {
-            messageToDraw.append(order.getOrderNumber()).append("     |  ").append(order.getName()).append("\n");
+        for (Map.Entry<Integer, Order> integerStringEntry : orders.entrySet()) {
+            messageToDraw
+                    .append(integerStringEntry.getKey())
+                    .append("     |  ")
+                    .append(integerStringEntry.getValue())
+                    .append("\n");
         }
         System.out.println(messageToDraw);
     }
